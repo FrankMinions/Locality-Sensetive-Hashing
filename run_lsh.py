@@ -166,4 +166,8 @@ if __name__ == '__main__':
     features = runHashingTF(args.numFeatures, tokenDf)
     model = runMinHashLSH(features)
     filtered = getFilteredIndex(model, features, args.threshold)
-    writeFile(lines, filtered, file_format, args.is_head, header, args.save_path)
+    
+    if file_format not in EXCEL_FORMAT:
+        writeFile(lines, filtered, file_format, args.is_head, header, args.save_path)
+    else:
+        writeExcel(lines, filtered, args.is_head, header, args.save_path)
