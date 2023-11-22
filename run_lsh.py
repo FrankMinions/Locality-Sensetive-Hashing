@@ -30,9 +30,9 @@ EXCEL_FORMAT = ["xlsx", 'xls']
 def readFile(file_path: str, file_format: str, is_head: bool):
     df = None
     if file_format in EXCEL_FORMAT:
-        df = read_excel(file_path, header=None).values.tolist()
+        df = read_excel(file_path, header=None).fillna('').values.tolist()
     if file_format == 'csv':
-        df = read_csv(file_path, header=None).values.tolist()
+        df = read_csv(file_path, header=None).fillna('').values.tolist()
     if file_format == 'txt':
         df = sc.textFile(file_path)
 
@@ -60,6 +60,7 @@ def getTokens(df, file_format: str):
             tokens.append(tuple([i, line, token_]))
     else:
         for i, line in enumerate(df):
+            line = [str(each) for each in line]
             # multiple sentences marked with token <unk>
             line_ = "<unk>".join(line)
             lines.append(tuple([i, line_]))
@@ -126,14 +127,14 @@ def writeFile(lines: List, index: List, file_format: str, is_head: bool, header:
                 csv_writer.writerow(header)
             for i, line in enumerate(lines):
                 if i in index:
-                    csv_writer.writerow(line[0].split('<unk>'))
+                    csv_writer.writerow(line[1].split('<unk>'))
 
 
 def writeExcel(lines: List, index: List, is_head: bool, header: List, save_path: str):
     data = []
     for i, line in enumerate(lines):
         if i in index:
-            data.append(line[0].split('<unk>'))
+            data.append(line[1].split('<unk>'))
     if is_head:
         df = DataFrame(data, columns=header)
         df.to_excel(save_path, sheet_name='sheet1', index=False)
