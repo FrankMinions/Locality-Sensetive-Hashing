@@ -15,11 +15,14 @@ conf = SparkConf().setAppName("feature engineering").setMaster("local[*]")
 
 # Driver heap memory size. Driver is the main control process responsible for creating context,
 # submitting jobs, converting jobs into tasks, and coordinating task execution between executors.
-conf.set("spark.driver.memory", '4G')
+conf.set("spark.driver.memory", '32G')
 
 # Executor heap memory. The executor is mainly responsible for executing specific calculation tasks
 # and returning the results to the driver.
-conf.set("spark.executor.memory", '6G')
+conf.set("spark.executor.memory", '64G')
+
+# Limit of total size of serialized results of all partitions for each Spark action (e.g. collect). 
+conf.set("spark.driver.maxResultSize", '32G')
 
 sc = SparkContext(conf=conf)
 spark = SparkSession.builder.getOrCreate()
@@ -150,7 +153,7 @@ if __name__ == '__main__':
     parser.add_argument("--is_head", type=bool, default=False, help="Does the table contain a header.")
     parser.add_argument("--numFeatures", type=int, default=None, help="Using hash function to map the "
                                                                       "maximum number of features required for index mapping.")
-    parser.add_argument("--threshold", type=float, default=0.5, help="The threshold of Jaccard distance.")
+    parser.add_argument("--threshold", type=float, default=0.1, help="The threshold of Jaccard distance.")
     parser.add_argument("--save_path", type=str, help="The path for saving filtered text.")
     args = parser.parse_args()
 
